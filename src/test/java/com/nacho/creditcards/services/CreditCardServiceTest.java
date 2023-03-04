@@ -1,5 +1,6 @@
 package com.nacho.creditcards.services;
 
+import com.nacho.creditcards.entities.CardBrand;
 import com.nacho.creditcards.entities.CreditCard;
 import com.nacho.creditcards.repositories.CreditCardRepository;
 import com.nacho.creditcards.services.interfaces.ICreditCardService;
@@ -37,12 +38,14 @@ public class CreditCardServiceTest {
                 .cardNumber("1234567890123456")
                 .holderName("John Doe")
                 .expirationDate(YearMonth.of(2023, 12))
+                .brand(CardBrand.VISA)
                 .build();
         when(creditCardRepository.save(creditCard)).thenReturn(creditCard);
         CreditCard savedCreditCard = creditCardService.createCreditCard(creditCard);
         verify(creditCardRepository, times(1)).save(creditCard);
         Assertions.assertEquals(creditCard, savedCreditCard);
     }
+
 
     @Test
     public void testGetCreditCardById() {
@@ -75,12 +78,14 @@ public class CreditCardServiceTest {
                 .cardNumber("1234567890123456")
                 .holderName("John Doe")
                 .expirationDate(YearMonth.of(2023, 12))
+                .brand(CardBrand.VISA)
                 .build();
         CreditCard creditCard2 = CreditCard.builder()
                 .id(2L)
                 .cardNumber("2345678901234567")
                 .holderName("Jane Doe")
                 .expirationDate(YearMonth.of(2024, 3))
+                .brand(CardBrand.NARA)
                 .build();
         List<CreditCard> creditCards = new ArrayList<>();
         creditCards.add(creditCard1);
@@ -93,6 +98,7 @@ public class CreditCardServiceTest {
         Assertions.assertEquals(creditCard2, retrievedCreditCards.get(1));
     }
 
+
     @Test
     public void testUpdateCreditCard() {
         Long id = 1L;
@@ -101,11 +107,13 @@ public class CreditCardServiceTest {
                 .cardNumber("1234567890123456")
                 .holderName("John Doe")
                 .expirationDate(YearMonth.of(2023, 12))
+                .brand(CardBrand.VISA)
                 .build();
         CreditCard newCreditCard = CreditCard.builder()
                 .cardNumber("2345678901234567")
                 .holderName("Jane Doe")
                 .expirationDate(YearMonth.of(2024, 3))
+                .brand(CardBrand.NARA)
                 .build();
         when(creditCardRepository.findById(id)).thenReturn(Optional.of(existingCreditCard));
         when(creditCardRepository.save(existingCreditCard)).thenReturn(existingCreditCard);
@@ -115,8 +123,10 @@ public class CreditCardServiceTest {
         Assertions.assertEquals("2345678901234567", existingCreditCard.getCardNumber());
         Assertions.assertEquals("Jane Doe", existingCreditCard.getHolderName());
         Assertions.assertEquals(YearMonth.of(2024, 3), existingCreditCard.getExpirationDate());
+        Assertions.assertEquals(CardBrand.NARA, existingCreditCard.getBrand());
         Assertions.assertEquals(existingCreditCard, updatedCreditCard);
     }
+
 
     @Test
     public void testUpdateCreditCardNotFound() {
@@ -125,6 +135,7 @@ public class CreditCardServiceTest {
                 .cardNumber("2345678901234567")
                 .holderName("Jane Doe")
                 .expirationDate(YearMonth.of(2024, 3))
+                .brand(CardBrand.VISA)
                 .build();
         when(creditCardRepository.findById(id)).thenReturn(Optional.empty());
         CreditCard updatedCreditCard = creditCardService.updateCreditCard(id, newCreditCard);
@@ -132,6 +143,7 @@ public class CreditCardServiceTest {
         verify(creditCardRepository, never()).save(any());
         Assertions.assertNull(updatedCreditCard);
     }
+
 
     @Test
     public void testDeleteCreditCard() {

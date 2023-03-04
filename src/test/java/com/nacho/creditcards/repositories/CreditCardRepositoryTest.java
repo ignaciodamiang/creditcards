@@ -1,6 +1,7 @@
 package com.nacho.creditcards.repositories;
 
 import com.nacho.creditcards.entities.CreditCard;
+import com.nacho.creditcards.entities.CardBrand;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -27,16 +28,19 @@ public class CreditCardRepositoryTest {
                 .cardNumber("1234 5678 9012 3456")
                 .holderName("John Doe")
                 .expirationDate(YearMonth.of(2025, 12))
+                .brand(CardBrand.VISA)
                 .build(),
             CreditCard.builder()
                 .cardNumber("2222 3333 4444 5555")
                 .holderName("Jane Doe")
                 .expirationDate(YearMonth.of(2023, 6))
+                .brand(CardBrand.NARA)
                 .build(),
             CreditCard.builder()
                 .cardNumber("6666 7777 8888 9999")
                 .holderName("Bob Smith")
                 .expirationDate(YearMonth.of(2024, 9))
+                .brand(CardBrand.AMEX)
                 .build()
         ));
     }
@@ -56,20 +60,21 @@ public class CreditCardRepositoryTest {
         List<CreditCard> creditCards = repository.findAll();
         assertThat(creditCards).hasSize(3);
     }
+
+@Test
+public void testSaveNewCreditCard() {
+    CreditCard creditCard = CreditCard.builder()
+            .cardNumber("7777 8888 9999 0000")
+            .holderName("Alice Smith")
+            .expirationDate(YearMonth.of(2026, 3))
+            .brand(CardBrand.VISA)
+            .build();
+    repository.save(creditCard);
+    CreditCard retrievedCreditCard = repository.findByCardNumber("7777 8888 9999 0000");
+    assertThat(retrievedCreditCard).isNotNull();
+    assertThat(retrievedCreditCard).isEqualTo(creditCard);
 }
 
-    @Test
-    public void testSaveNewCreditCard() {
-        CreditCard creditCard = CreditCard.builder()
-                .cardNumber("7777 8888 9999 0000")
-                .holderName("Alice Smith")
-                .expirationDate(YearMonth.of(2026, 3))
-                .build();
-        repository.save(creditCard);
-        CreditCard retrievedCreditCard = repository.findByCardNumber("7777 8888 9999 0000");
-        assertThat(retrievedCreditCard).isNotNull();
-        assertThat(retrievedCreditCard).isEqualTo(creditCard);
-    }
 
     @Test
     public void testUpdateCreditCard() {

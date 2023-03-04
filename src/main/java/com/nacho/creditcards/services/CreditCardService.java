@@ -40,11 +40,13 @@ public class CreditCardService implements ICreditCardService {
             existingCreditCard.setCardNumber(creditCard.getCardNumber());
             existingCreditCard.setHolderName(creditCard.getHolderName());
             existingCreditCard.setExpirationDate(creditCard.getExpirationDate());
+            existingCreditCard.setBrand(creditCard.getBrand());
             return creditCardRepository.save(existingCreditCard);
         } else {
             return null;
         }
     }
+
 
     @Override
     public void deleteCreditCard(Long id) {

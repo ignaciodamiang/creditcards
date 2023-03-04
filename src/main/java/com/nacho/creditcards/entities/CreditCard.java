@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import java.time.YearMonth;
 
 import com.nacho.creditcards.utilities.YearMonthAttributeConverter;
+import com.nacho.creditcards.utilities.CardBrandAttributeConverter;
 
 @Entity
 @Data
@@ -35,4 +36,8 @@ public class CreditCard {
     @Column(nullable = false)
     @Convert(converter = YearMonthAttributeConverter.class)
     private YearMonth expirationDate;
+
+    @Column(nullable = false)
+    @Convert(converter = CardBrandAttributeConverter.class)
+    private CardBrand brand;
 }
