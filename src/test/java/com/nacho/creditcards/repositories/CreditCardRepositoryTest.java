@@ -97,7 +97,7 @@ public void testSaveNewCreditCard() {
     @Test
     void testFindByCardNumberAndHolderNameAndExpirationDateAndBrand() {
         CreditCard creditCard = CreditCard.builder()
-                .cardNumber("7777 8888 9999 0000")
+                .cardNumber("1111 8888 9999 0000")
                 .holderName("Alice Smith")
                 .expirationDate(YearMonth.of(2026, 3))
                 .brand(CardBrand.VISA)
@@ -105,7 +105,7 @@ public void testSaveNewCreditCard() {
         repository.save(creditCard);
 
         CreditCard retrievedCreditCard = repository.findByCardNumberAndHolderNameAndExpirationDateAndBrand(
-                "7777 8888 9999 0000", "Alice Smith", YearMonth.of(2026, 3), CardBrand.VISA);
+                "1111 8888 9999 0000", "Alice Smith", YearMonth.of(2026, 3), CardBrand.VISA);
 
         assertThat(retrievedCreditCard).isNotNull();
         assertThat(retrievedCreditCard).isEqualTo(creditCard);
