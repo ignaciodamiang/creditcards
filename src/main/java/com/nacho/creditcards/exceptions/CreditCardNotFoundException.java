@@ -2,7 +2,9 @@ package com.nacho.creditcards.exceptions;
 
 public class CreditCardNotFoundException extends RuntimeException {
 
-    public CreditCardNotFoundException(String message) {
+    private static final long serialVersionUID = 1L;
+
+	public CreditCardNotFoundException(String message) {
         super(message);
     }
 }

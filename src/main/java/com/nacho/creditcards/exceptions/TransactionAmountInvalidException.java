@@ -2,7 +2,9 @@ package com.nacho.creditcards.exceptions;
 
 public class TransactionAmountInvalidException extends RuntimeException {
 
-    public TransactionAmountInvalidException(String message) {
+    private static final long serialVersionUID = 1L;
+
+	public TransactionAmountInvalidException(String message) {
         super(message);
     }
 }
