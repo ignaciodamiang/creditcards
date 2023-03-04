@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class CreditCardServiceTest {
@@ -151,5 +152,33 @@ public class CreditCardServiceTest {
         doNothing().when(creditCardRepository).deleteById(id);
         creditCardService.deleteCreditCard(id);
         verify(creditCardRepository, times(1)).deleteById(id);
+    }
+    
+    @Test
+    public void testFindByCardNumberAndHolderNameAndExpirationDateAndBrand() {
+        String cardNumber = "1234 5678 9012 3456";
+        String holderName = "John Doe";
+        YearMonth expirationDate = YearMonth.of(2025, 12);
+        CardBrand brand = CardBrand.VISA;
+    
+        CreditCard expectedCreditCard = CreditCard.builder()
+                .cardNumber(cardNumber)
+                .holderName(holderName)
+                .expirationDate(expirationDate)
+                .brand(brand)
+                .build();
+    
+        when(creditCardRepository.findByCardNumberAndHolderNameAndExpirationDateAndBrand(cardNumber, holderName, expirationDate, brand))
+                .thenReturn(expectedCreditCard);
+    
+        CreditCard retrievedCreditCard = creditCardService.findByCardNumberAndHolderNameAndExpirationDateAndBrand(cardNumber, holderName, expirationDate, brand);
+    
+        verify(creditCardRepository, times(1)).findByCardNumberAndHolderNameAndExpirationDateAndBrand(cardNumber, holderName, expirationDate, brand);
+    
+        assertThat(retrievedCreditCard).isNotNull();
+        assertThat(retrievedCreditCard.getCardNumber()).isEqualTo(expectedCreditCard.getCardNumber());
+        assertThat(retrievedCreditCard.getHolderName()).isEqualTo(expectedCreditCard.getHolderName());
+        assertThat(retrievedCreditCard.getExpirationDate()).isEqualTo(expectedCreditCard.getExpirationDate());
+        assertThat(retrievedCreditCard.getBrand()).isEqualTo(expectedCreditCard.getBrand());
     }
 }

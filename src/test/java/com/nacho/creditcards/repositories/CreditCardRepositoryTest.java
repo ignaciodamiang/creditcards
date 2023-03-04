@@ -93,4 +93,21 @@ public void testSaveNewCreditCard() {
         CreditCard retrievedCreditCard = repository.findByCardNumber("2222 3333 4444 5555");
         assertThat(retrievedCreditCard).isNull();
     }
+
+    @Test
+    void testFindByCardNumberAndHolderNameAndExpirationDateAndBrand() {
+        CreditCard creditCard = CreditCard.builder()
+                .cardNumber("7777 8888 9999 0000")
+                .holderName("Alice Smith")
+                .expirationDate(YearMonth.of(2026, 3))
+                .brand(CardBrand.VISA)
+                .build();
+        repository.save(creditCard);
+
+        CreditCard retrievedCreditCard = repository.findByCardNumberAndHolderNameAndExpirationDateAndBrand(
+                "7777 8888 9999 0000", "Alice Smith", YearMonth.of(2026, 3), CardBrand.VISA);
+
+        assertThat(retrievedCreditCard).isNotNull();
+        assertThat(retrievedCreditCard).isEqualTo(creditCard);
+    }
 }

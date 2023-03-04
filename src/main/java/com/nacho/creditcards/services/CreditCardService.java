@@ -1,5 +1,6 @@
 package com.nacho.creditcards.services;
 
+import com.nacho.creditcards.entities.CardBrand;
 import com.nacho.creditcards.entities.CreditCard;
 import com.nacho.creditcards.repositories.CreditCardRepository;
 import com.nacho.creditcards.services.interfaces.ICreditCardService;
@@ -7,6 +8,7 @@ import com.nacho.creditcards.services.interfaces.ICreditCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,9 +49,13 @@ public class CreditCardService implements ICreditCardService {
         }
     }
 
-
     @Override
     public void deleteCreditCard(Long id) {
         creditCardRepository.deleteById(id);
     }
+    
+	@Override
+	public CreditCard findByCardNumberAndHolderNameAndExpirationDateAndBrand(String cardNumber, String holderName, YearMonth expirationDate, CardBrand brand) {
+		return creditCardRepository.findByCardNumberAndHolderNameAndExpirationDateAndBrand(cardNumber, holderName, expirationDate, brand);
+	}
 }
