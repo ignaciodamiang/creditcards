@@ -57,3 +57,35 @@ public class CreditCardRepositoryTest {
         assertThat(creditCards).hasSize(3);
     }
 }
+
+    @Test
+    public void testSaveNewCreditCard() {
+        CreditCard creditCard = CreditCard.builder()
+                .cardNumber("7777 8888 9999 0000")
+                .holderName("Alice Smith")
+                .expirationDate(YearMonth.of(2026, 3))
+                .build();
+        repository.save(creditCard);
+        CreditCard retrievedCreditCard = repository.findByCardNumber("7777 8888 9999 0000");
+        assertThat(retrievedCreditCard).isNotNull();
+        assertThat(retrievedCreditCard).isEqualTo(creditCard);
+    }
+
+    @Test
+    public void testUpdateCreditCard() {
+        CreditCard creditCard = repository.findByCardNumber("1234 5678 9012 3456");
+        creditCard.setHolderName("John Smith");
+        repository.save(creditCard);
+        CreditCard retrievedCreditCard = repository.findByCardNumber("1234 5678 9012 3456");
+        assertThat(retrievedCreditCard).isNotNull();
+        assertThat(retrievedCreditCard.getHolderName()).isEqualTo("John Smith");
+    }
+
+    @Test
+    public void testDeleteCreditCard() {
+        CreditCard creditCard = repository.findByCardNumber("2222 3333 4444 5555");
+        repository.delete(creditCard);
+        CreditCard retrievedCreditCard = repository.findByCardNumber("2222 3333 4444 5555");
+        assertThat(retrievedCreditCard).isNull();
+    }
+}
