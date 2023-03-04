@@ -66,10 +66,62 @@ public class CreditCardService implements ICreditCardService {
 	}
 	
 	@Override
+	public boolean isValidCreditCard(CreditCard creditCard) {
+		boolean isValid = true;
+		String errorMessage = "";
+	
+		// Check card number validity
+		String cardNumber = creditCard.getCardNumber();
+		if (!isValidCardNumber(cardNumber)) {
+			isValid = false;
+			errorMessage += "Invalid card number: " + cardNumber + "\n";
+		}
+	
+		// Check expiration date validity
+		if (!isExpirationDateValid(creditCard)) {
+			isValid = false;
+			errorMessage += "Invalid expiration date: " + creditCard.getExpirationDate() + "\n";
+		}
+	
+		// Check cardholder name validity
+		String cardholderName = creditCard.getHolderName();
+		if (!isCardHolderNameValid(cardholderName)) {
+			isValid = false;
+			errorMessage += "Invalid cardholder name: " + cardholderName + "\n";
+		}
+	
+		if (!isValid) {
+			throw new CreditCardNotValidException("Credit card is not valid: \n" + errorMessage);
+		}
+	
+		return isValid;
+	}	
+
+	@Override
 	public boolean isExpirationDateValid(CreditCard creditCard) {
 	    YearMonth expirationDate = creditCard.getExpirationDate();
 	    YearMonth currentDate = YearMonth.now();
 	    return expirationDate.isAfter(currentDate) || expirationDate.equals(currentDate);
 	}
 
+	private boolean isValidCardNumber(String cardNumber) {
+	    return cardNumber.matches("\\d{16}");
+	}
+	
+	public boolean isCardHolderNameValid(String cardholderName) {
+	    if (cardholderName == null || cardholderName.isBlank()) {
+	        return false;
+	    }
+	    String[] nameParts = cardholderName.split("\\s+");
+	    if (nameParts.length < 2) {
+	        return false;
+	    }
+	    // Validate each name part
+	    for (String namePart : nameParts) {
+	        if (!namePart.matches("[A-Za-z]+")) {
+	            return false;
+	        }
+	    }
+	    return true;
+	}
 }

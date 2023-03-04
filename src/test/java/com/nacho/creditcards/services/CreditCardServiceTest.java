@@ -221,4 +221,20 @@ public class CreditCardServiceTest {
         Assertions.assertThrows(CreditCardNotValidException.class, () -> creditCardService.createCreditCard(invalidCreditCard));
     }
 
+    @Test
+    public void testIsValidCreditCardWithValidCard() throws CreditCardNotValidException {
+    // Arrange
+    CreditCard validCreditCard = CreditCard.builder()
+            .cardNumber("1234567890123456")
+            .holderName("John Doe")
+            .expirationDate(YearMonth.of(2025, 12))
+            .brand(CardBrand.VISA)
+            .build();
+    
+    // Act
+    boolean isValid = creditCardService.isValidCreditCard(validCreditCard);
+    
+    // Assert
+    assertThat(isValid).isTrue();
+}
 }

@@ -33,9 +33,7 @@ public class TransactionService implements ITransactionService {
         if (creditCard == null) {
             throw new CreditCardNotFoundException("Credit card not found");
         }
-        if (!isValidCreditCard(creditCard)) {
-            throw new CreditCardNotValidException("Credit card is not valid");
-        }
+        
         if (amount.compareTo(BigDecimal.ZERO) <= 0 || amount.compareTo(BigDecimal.valueOf(1000)) > 0) {
             throw new TransactionAmountInvalidException("Transaction amount is invalid");
         }
@@ -66,12 +64,5 @@ public class TransactionService implements ITransactionService {
             throw new TransactionNotFoundException("Transaction not found");
         }
         transactionRepository.deleteById(id);
-    }
-    
-    @Override
-    public boolean isValidCreditCard(CreditCard creditCard) {
-        // Perform validation checks on the credit card
-        // ...
-        return true; // Return true if the credit card is valid, false otherwise
     }
 }

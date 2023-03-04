@@ -20,6 +20,4 @@ public interface ITransactionService {
     List<Transaction> getAllTransactions();
 
     void deleteTransaction(Long id) throws TransactionNotFoundException;
-
-	boolean isValidCreditCard(CreditCard creditCard);
 }
