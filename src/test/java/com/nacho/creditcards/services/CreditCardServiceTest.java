@@ -2,6 +2,7 @@ package com.nacho.creditcards.services;
 
 import com.nacho.creditcards.entities.CardBrand;
 import com.nacho.creditcards.entities.CreditCard;
+import com.nacho.creditcards.exceptions.CreditCardNotValidException;
 import com.nacho.creditcards.repositories.CreditCardRepository;
 import com.nacho.creditcards.services.interfaces.ICreditCardService;
 
@@ -18,6 +19,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class CreditCardServiceTest {
@@ -181,4 +184,41 @@ public class CreditCardServiceTest {
         assertThat(retrievedCreditCard.getExpirationDate()).isEqualTo(expectedCreditCard.getExpirationDate());
         assertThat(retrievedCreditCard.getBrand()).isEqualTo(expectedCreditCard.getBrand());
     }
+    
+    @Test
+    public void testIsExpirationDateValid() {
+        CreditCard creditCard = CreditCard.builder()
+                .cardNumber("1234567890123456")
+                .holderName("John Doe")
+                .expirationDate(YearMonth.of(2023, 12))
+                .brand(CardBrand.VISA)
+                .build();
+
+        // test with expiration date in the future
+        boolean result1 = creditCardService.isExpirationDateValid(creditCard);
+        assertTrue(result1);
+
+        // test with expiration date in the past
+        creditCard.setExpirationDate(YearMonth.of(2021, 1));
+        boolean result2 = creditCardService.isExpirationDateValid(creditCard);
+        assertFalse(result2);
+
+        // test with expiration date equal to current date
+        creditCard.setExpirationDate(YearMonth.now());
+        boolean result3 = creditCardService.isExpirationDateValid(creditCard);
+        assertTrue(result3);
+    }
+    
+    @Test
+    public void testCreateCreditCardWithInvalidExpirationDate() {
+        CreditCard invalidCreditCard = CreditCard.builder()
+                .cardNumber("1234567890123456")
+                .holderName("John Doe")
+                .expirationDate(YearMonth.of(2000, 1))
+                .brand(CardBrand.VISA)
+                .build();
+        
+        Assertions.assertThrows(CreditCardNotValidException.class, () -> creditCardService.createCreditCard(invalidCreditCard));
+    }
+
 }

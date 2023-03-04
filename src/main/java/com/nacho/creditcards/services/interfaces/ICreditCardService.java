@@ -13,4 +13,5 @@ public interface ICreditCardService {
     CreditCard updateCreditCard(Long id, CreditCard creditCard);
     void deleteCreditCard(Long id);
 	CreditCard findByCardNumberAndHolderNameAndExpirationDateAndBrand(String cardNumber, String holderName, YearMonth expirationDate, CardBrand brand);
+	boolean isExpirationDateValid(CreditCard creditCard);
 }

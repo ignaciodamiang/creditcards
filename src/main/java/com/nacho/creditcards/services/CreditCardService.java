@@ -2,6 +2,7 @@ package com.nacho.creditcards.services;
 
 import com.nacho.creditcards.entities.CardBrand;
 import com.nacho.creditcards.entities.CreditCard;
+import com.nacho.creditcards.exceptions.CreditCardNotValidException;
 import com.nacho.creditcards.repositories.CreditCardRepository;
 import com.nacho.creditcards.services.interfaces.ICreditCardService;
 
@@ -19,7 +20,12 @@ public class CreditCardService implements ICreditCardService {
     private CreditCardRepository creditCardRepository;
 
     @Override
-    public CreditCard createCreditCard(CreditCard creditCard) {
+    public CreditCard createCreditCard(CreditCard creditCard) throws CreditCardNotValidException {
+        YearMonth now = YearMonth.now();
+        YearMonth cardExpiration = creditCard.getExpirationDate();
+        if (cardExpiration.isBefore(now)) {
+            throw new CreditCardNotValidException("Credit card expiration date is not valid");
+        }
         return creditCardRepository.save(creditCard);
     }
 
@@ -58,4 +64,12 @@ public class CreditCardService implements ICreditCardService {
 	public CreditCard findByCardNumberAndHolderNameAndExpirationDateAndBrand(String cardNumber, String holderName, YearMonth expirationDate, CardBrand brand) {
 		return creditCardRepository.findByCardNumberAndHolderNameAndExpirationDateAndBrand(cardNumber, holderName, expirationDate, brand);
 	}
+	
+	@Override
+	public boolean isExpirationDateValid(CreditCard creditCard) {
+	    YearMonth expirationDate = creditCard.getExpirationDate();
+	    YearMonth currentDate = YearMonth.now();
+	    return expirationDate.isAfter(currentDate) || expirationDate.equals(currentDate);
+	}
+
 }
