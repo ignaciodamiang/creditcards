@@ -11,11 +11,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import java.time.YearMonth;
 
-import com.nacho.creditcards.utilities.YearMonthAttributeConverter;
 import com.nacho.creditcards.utilities.CardBrandAttributeConverter;
+import com.nacho.creditcards.utilities.YearMonthAttributeConverter;
 
 @Entity
 @Data
@@ -40,4 +41,11 @@ public class CreditCard {
     @Column(nullable = false)
     @Convert(converter = CardBrandAttributeConverter.class)
     private CardBrand brand;
+    
+    public CreditCard(@NonNull String cardNumber, @NonNull String holderName, @NonNull YearMonth expirationDate, @NonNull CardBrand brand) {
+        this.cardNumber = cardNumber;
+        this.holderName = holderName;
+        this.expirationDate = expirationDate;
+        this.brand = brand;
+    }
 }
