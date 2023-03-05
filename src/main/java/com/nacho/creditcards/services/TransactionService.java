@@ -86,4 +86,17 @@ public class TransactionService implements ITransactionService {
         }
         return transaction.getAmount().doubleValue() * fee;
     }
+
+    @Override
+    public Transaction updateTransaction(Long id, Transaction transaction) throws TransactionNotFoundException {
+        Transaction existingTransaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new TransactionNotFoundException("Transaction with id: " + id + " not found"));
+        
+        existingTransaction.setCreditCard(transaction.getCreditCard());
+        existingTransaction.setAmount(transaction.getAmount());
+        existingTransaction.setDateTime(transaction.getDateTime());
+
+        return transactionRepository.save(existingTransaction);
+    }
+
 }

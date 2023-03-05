@@ -24,4 +24,6 @@ public interface ITransactionService {
 	double calculateFee(Transaction transaction);
 
 	void validateTransaction(CreditCard creditCard, BigDecimal amount);
+
+	Transaction updateTransaction(Long id, Transaction transaction);
 }
