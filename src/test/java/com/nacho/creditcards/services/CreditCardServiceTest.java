@@ -223,7 +223,6 @@ public class CreditCardServiceTest {
 
     @Test
     public void testIsValidCreditCardWithValidCard() throws CreditCardNotValidException {
-    // Arrange
     CreditCard validCreditCard = CreditCard.builder()
             .cardNumber("1234567890123456")
             .holderName("John Doe")
@@ -231,10 +230,8 @@ public class CreditCardServiceTest {
             .brand(CardBrand.VISA)
             .build();
     
-    // Act
     boolean isValid = creditCardService.isValidCreditCard(validCreditCard);
     
-    // Assert
     assertThat(isValid).isTrue();
 }
 }
