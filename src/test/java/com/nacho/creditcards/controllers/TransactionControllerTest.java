@@ -147,4 +147,31 @@ public class TransactionControllerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         verify(transactionService, times(1)).deleteTransaction(id);
     }
+    
+    @Test
+    public void testValidateTransaction() {
+        // Arrange
+        CreditCard creditCard = CreditCard.builder()
+                .id(1L)
+                .cardNumber("1234 5678 9012 3456")
+                .holderName("John Doe")
+                .expirationDate(YearMonth.of(2025, 12))
+                .brand(CardBrand.VISA)
+                .build();
+        
+        BigDecimal amount = BigDecimal.valueOf(100.00);
+        doNothing().when(transactionService).validateTransaction(creditCard, amount);
+
+        // Act
+        ResponseEntity<String> response = controller.validateTransaction(Transaction.builder()
+                .amount(amount)
+                .creditCard(creditCard)
+                .build());
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo("Transaction is valid");
+        verify(transactionService, times(1)).validateTransaction(creditCard, amount);
+    }
+
 }

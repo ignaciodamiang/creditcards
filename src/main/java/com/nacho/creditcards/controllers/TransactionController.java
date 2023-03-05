@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.nacho.creditcards.entities.CreditCard;
 import com.nacho.creditcards.entities.Transaction;
+import com.nacho.creditcards.exceptions.CreditCardNotFoundException;
+import com.nacho.creditcards.exceptions.CreditCardNotValidException;
+import com.nacho.creditcards.exceptions.TransactionAmountInvalidException;
 import com.nacho.creditcards.services.interfaces.ITransactionService;
 
 @RestController
@@ -65,5 +68,15 @@ public class TransactionController {
     public ResponseEntity<Void> deleteTransaction(@PathVariable Long id) {
         transactionService.deleteTransaction(id);
         return ResponseEntity.noContent().build();
+    }
+    
+    @PostMapping("/validate")
+    public ResponseEntity<String> validateTransaction(@RequestBody Transaction transaction) {
+        try {
+            transactionService.validateTransaction(transaction.getCreditCard(), transaction.getAmount());
+            return ResponseEntity.ok("Transaction is valid");
+        } catch (CreditCardNotFoundException | CreditCardNotValidException | TransactionAmountInvalidException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
