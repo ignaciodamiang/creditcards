@@ -68,14 +68,9 @@ public class CreditCardController {
         }
     }
 
-    @GetMapping("/{id}/is-distinct")
-    public ResponseEntity<Boolean> isCreditCardDistinct(@PathVariable Long id) {
-        CreditCard creditCard = creditCardService.getCreditCardById(id);
-        if (creditCard == null) {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/is-distinct")
+    public ResponseEntity<Boolean> isCreditCardDistinct(@RequestBody CreditCard creditCard) {
         boolean isDistinct = creditCardService.isCreditCardDistinct(creditCard);
         return ResponseEntity.ok(isDistinct);
-    }
-
+    }    
 }

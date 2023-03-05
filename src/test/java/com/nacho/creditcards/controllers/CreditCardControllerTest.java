@@ -19,6 +19,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -198,21 +202,23 @@ public class CreditCardControllerTest {
     @Test
     public void testIsCreditCardDistinct() {
         // Arrange
-        Long id = 1L;
-        CreditCard creditCard = new CreditCard();
-        creditCard.setId(id);
-        when(creditCardService.getCreditCardById(id)).thenReturn(creditCard);
-        when(creditCardService.isCreditCardDistinct(creditCard)).thenReturn(true);
+        CreditCard creditCard = CreditCard.builder()
+                .id(1L)
+                .cardNumber("1234567890123456")
+                .holderName("John Doe")
+                .expirationDate(YearMonth.of(2025, 12))
+                .brand(CardBrand.VISA)
+                .build();
 
-        controller.creditCardService = creditCardService;
-        
+        when(creditCardService.isCreditCardDistinct(any(CreditCard.class))).thenReturn(true);
+
         // Act
-        ResponseEntity<Boolean> response = controller.isCreditCardDistinct(id);
+        ResponseEntity<Boolean> response = controller.isCreditCardDistinct(creditCard);
 
         // Assert
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isEqualTo(true);
-        verify(creditCardService, times(1)).getCreditCardById(id);
-        verify(creditCardService, times(1)).isCreditCardDistinct(creditCard);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertTrue(response.getBody());
+        verify(creditCardService, times(1)).isCreditCardDistinct(eq(creditCard));
     }
+    
 }
