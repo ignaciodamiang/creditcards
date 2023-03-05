@@ -43,3 +43,4 @@ tmp/
 
 ### Configuration ###
 application.properties
+/.apt_generated_tests/

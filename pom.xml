@@ -71,5 +71,6 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>creditcards</finalName>
 	</build>
 </project>

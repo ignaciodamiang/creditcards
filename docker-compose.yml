@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  creditcards:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: creditcards
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysqldb
+    environment:
+      MYSQL_HOST: mysqldb
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ninguna01
+      MYSQL_DATABASE: creditcards
+    networks:
+      - creditcards-network
+    
+  mysqldb:
+    image: mysql:8.0
+    container_name: mysqldb
+    volumes:
+      - ./var/www/db:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ninguna01
+      MYSQL_DATABASE: creditcards
+      MYSQL_PORT: 3306
+    networks:
+      - creditcards-network
+
+networks:
+  creditcards-network:
