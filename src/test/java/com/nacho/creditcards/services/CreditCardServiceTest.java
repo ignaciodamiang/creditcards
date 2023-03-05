@@ -233,5 +233,38 @@ public class CreditCardServiceTest {
     boolean isValid = creditCardService.isValidCreditCard(validCreditCard);
     
     assertThat(isValid).isTrue();
-}
+    }
+    
+    @Test
+    public void testIsCreditCardDistinct() {
+        // Arrange
+        CreditCard creditCard = CreditCard.builder()
+                .id(1L)
+                .cardNumber("1234 5678 9012 3456")
+                .holderName("John Doe")
+                .expirationDate(YearMonth.of(2025, 12))
+                .brand(CardBrand.VISA)
+                .build();
+
+        CreditCard existingCard = CreditCard.builder()
+                .id(2L)
+                .cardNumber("1111 2222 3333 4444")
+                .holderName("Jane Doe")
+                .expirationDate(YearMonth.of(2023, 11))
+                .brand(CardBrand.AMEX)
+                .build();
+
+        when(creditCardRepository.findByCardNumberAndHolderNameAndExpirationDateAndBrand(
+                creditCard.getCardNumber(),
+                creditCard.getHolderName(),
+                creditCard.getExpirationDate(),
+                creditCard.getBrand()
+        )).thenReturn(existingCard);
+
+        // Act
+        boolean isDistinct = creditCardService.isCreditCardDistinct(creditCard);
+
+        // Assert
+        assertThat(isDistinct).isFalse();
+    }
 }

@@ -53,4 +53,29 @@ public class CreditCardController {
         creditCardService.deleteCreditCard(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @GetMapping("/{id}/valid")
+    public ResponseEntity<String> isCreditCardValid(@PathVariable Long id) {
+        CreditCard creditCard = creditCardService.getCreditCardById(id);
+        if (creditCard == null) {
+            return ResponseEntity.notFound().build();
+        }
+        boolean isValid = creditCardService.isValidCreditCard(creditCard);
+        if (isValid) {
+            return ResponseEntity.ok("Credit card is valid for operations");
+        } else {
+            return ResponseEntity.ok("Credit card is not valid for operations");
+        }
+    }
+
+    @GetMapping("/{id}/is-distinct")
+    public ResponseEntity<Boolean> isCreditCardDistinct(@PathVariable Long id) {
+        CreditCard creditCard = creditCardService.getCreditCardById(id);
+        if (creditCard == null) {
+            return ResponseEntity.notFound().build();
+        }
+        boolean isDistinct = creditCardService.isCreditCardDistinct(creditCard);
+        return ResponseEntity.ok(isDistinct);
+    }
+
 }

@@ -4,9 +4,12 @@ import com.nacho.creditcards.entities.CardBrand;
 import com.nacho.creditcards.entities.CreditCard;
 import com.nacho.creditcards.exceptions.CreditCardNotValidException;
 import com.nacho.creditcards.services.interfaces.ICreditCardService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +30,14 @@ public class CreditCardControllerTest {
     @Mock
     private ICreditCardService creditCardService;
 
+    @InjectMocks
+    CreditCardController controller;
+    
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+    
     @Test
     public void testGetCreditCardById() {
         // Arrange
@@ -39,7 +50,6 @@ public class CreditCardControllerTest {
                 .build();
         when(creditCardService.getCreditCardById(creditCard.getId())).thenReturn(creditCard);
 
-        CreditCardController controller = new CreditCardController();
         controller.creditCardService = creditCardService;
 
         // Act
@@ -71,7 +81,6 @@ public class CreditCardControllerTest {
         );
         when(creditCardService.getAllCreditCards()).thenReturn(creditCards);
 
-        CreditCardController controller = new CreditCardController();
         controller.creditCardService = creditCardService;
 
         // Act
@@ -103,7 +112,6 @@ public class CreditCardControllerTest {
         
         when(creditCardService.createCreditCard(creditCard)).thenReturn(createdCreditCard);
         
-        CreditCardController controller = new CreditCardController();
         controller.creditCardService = creditCardService;
 
         // Act
@@ -135,7 +143,6 @@ public class CreditCardControllerTest {
 
         when(creditCardService.updateCreditCard(id, creditCardToUpdate)).thenReturn(updatedCreditCard);
 
-        CreditCardController controller = new CreditCardController();
         controller.creditCardService = creditCardService;
 
         // Act
@@ -152,7 +159,6 @@ public class CreditCardControllerTest {
         Long id = 1L;
         doNothing().when(creditCardService).deleteCreditCard(id);
 
-        CreditCardController controller = new CreditCardController();
         controller.creditCardService = creditCardService;
 
         // Act
@@ -161,5 +167,52 @@ public class CreditCardControllerTest {
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         verify(creditCardService, times(1)).deleteCreditCard(id);
+    }
+    
+    @Test
+    public void testIsCreditCardValid() throws Exception {
+        // Arrange
+        Long id = 1L;
+        CreditCard creditCard = CreditCard.builder()
+                .id(id)
+                .cardNumber("1234 5678 9012 3456")
+                .holderName("John Doe")
+                .expirationDate(YearMonth.of(2025, 12))
+                .brand(CardBrand.VISA)
+                .build();
+        when(creditCardService.getCreditCardById(id)).thenReturn(creditCard);
+        when(creditCardService.isValidCreditCard(creditCard)).thenReturn(true);
+
+        controller.creditCardService = creditCardService;
+        
+        // Act
+        ResponseEntity<String> response = controller.isCreditCardValid(id);
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo("Credit card is valid for operations");
+        verify(creditCardService, times(1)).getCreditCardById(id);
+        verify(creditCardService, times(1)).isValidCreditCard(creditCard);
+    }
+    
+    @Test
+    public void testIsCreditCardDistinct() {
+        // Arrange
+        Long id = 1L;
+        CreditCard creditCard = new CreditCard();
+        creditCard.setId(id);
+        when(creditCardService.getCreditCardById(id)).thenReturn(creditCard);
+        when(creditCardService.isCreditCardDistinct(creditCard)).thenReturn(true);
+
+        controller.creditCardService = creditCardService;
+        
+        // Act
+        ResponseEntity<Boolean> response = controller.isCreditCardDistinct(id);
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(true);
+        verify(creditCardService, times(1)).getCreditCardById(id);
+        verify(creditCardService, times(1)).isCreditCardDistinct(creditCard);
     }
 }

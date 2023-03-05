@@ -15,4 +15,5 @@ public interface ICreditCardService {
 	CreditCard findByCardNumberAndHolderNameAndExpirationDateAndBrand(String cardNumber, String holderName, YearMonth expirationDate, CardBrand brand);
 	boolean isExpirationDateValid(CreditCard creditCard);
 	boolean isValidCreditCard(CreditCard creditCard);
+	boolean isCreditCardDistinct(CreditCard creditCard);
 }

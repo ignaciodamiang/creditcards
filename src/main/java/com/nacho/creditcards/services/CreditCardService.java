@@ -124,4 +124,22 @@ public class CreditCardService implements ICreditCardService {
 	    }
 	    return true;
 	}
+
+	@Override
+	public boolean isCreditCardDistinct(CreditCard creditCard) {
+	    // check if a credit card with the same number already exists
+	    CreditCard existingCard = creditCardRepository.findByCardNumberAndHolderNameAndExpirationDateAndBrand(
+	            creditCard.getCardNumber(),
+	            creditCard.getHolderName(),
+	            creditCard.getExpirationDate(),
+	            creditCard.getBrand()
+	    );
+	    if (existingCard == null) {
+	        // no credit card with the same number exists, it is distinct
+	        return true;
+	    } else {
+	        // a credit card with the same number already exists, it is not distinct
+	        return false;
+	    }
+	}
 }
