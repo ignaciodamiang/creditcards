@@ -11,16 +11,22 @@ import com.nacho.creditcards.services.interfaces.ITransactionService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -87,14 +93,15 @@ public class TransactionServiceTest {
                 .holderName("John Doe")
                 .expirationDate(YearMonth.of(2023, 12))
                 .build();
-        Transaction transaction = Transaction.builder()
-                .creditCard(creditCard)
-                .dateTime(dateTime)
-                .amount(amount)
-                .build();
-        double fee = transactionService.calculateFee(transaction);
-        double expectedFee = (double)22/12*100;
-        Assertions.assertEquals(expectedFee, fee, 0.01);
+        BigDecimal fee = transactionService.calculateFee(
+                Transaction.builder()
+                        .creditCard(creditCard)
+                        .dateTime(dateTime)
+                        .amount(amount)
+                        .build()
+        );
+        BigDecimal expectedFee = BigDecimal.valueOf(22).divide(BigDecimal.valueOf(12), 2, RoundingMode.HALF_UP).multiply(amount);
+        Assertions.assertEquals(expectedFee, fee);
     }
     
     @Test
@@ -108,15 +115,17 @@ public class TransactionServiceTest {
                 .holderName("John Doe")
                 .expirationDate(YearMonth.of(2023, 12))
                 .build();
-        Transaction transaction = Transaction.builder()
-                .creditCard(creditCard)
-                .dateTime(dateTime)
-                .amount(amount)
-                .build();
-        double fee = transactionService.calculateFee(transaction);
-        double expectedFee = (double)10*0.5*100;
+        double fee = transactionService.calculateFee(
+                Transaction.builder()
+                        .creditCard(creditCard)
+                        .dateTime(dateTime)
+                        .amount(amount)
+                        .build()
+        ).doubleValue();
+        double expectedFee = 10.0 * 0.5 * 100.0;
         Assertions.assertEquals(expectedFee, fee, 0.01);
     }
+
     
     @Test
     public void testCalculateFeeForAmexTransaction() {
@@ -134,9 +143,9 @@ public class TransactionServiceTest {
                 .dateTime(dateTime)
                 .amount(amount)
                 .build();
-        double fee = transactionService.calculateFee(transaction);
-        double expectedFee = 12*0.1*100;
-        Assertions.assertEquals(expectedFee, fee, 0.01);
+        BigDecimal fee = transactionService.calculateFee(transaction);
+        BigDecimal expectedFee = BigDecimal.valueOf(12).multiply(BigDecimal.valueOf(0.1)).multiply(amount);
+        Assertions.assertEquals(expectedFee, fee);
     }
     
     @Test
@@ -178,5 +187,21 @@ public class TransactionServiceTest {
             transactionService.validateTransaction(creditCard, amount);
         });
     }
-}
 
+    @Test
+    public void testSimulateTransactionAndGetFee() {
+        // Arrange
+        int year = LocalDateTime.now().getYear() % 100;
+        int month = LocalDateTime.now().getMonthValue();
+        String brand = "visa";
+        BigDecimal amount = BigDecimal.valueOf(100.0);
+        BigDecimal expectedFee = BigDecimal.valueOf(year).divide(BigDecimal.valueOf(month), 2, RoundingMode.HALF_UP).multiply(amount);
+        // Act
+        BigDecimal fee = transactionService.simulateTransactionAndGetFee(brand, amount);
+    
+        // Assert
+        assertNotNull(fee);
+        assertTrue(fee instanceof BigDecimal);
+        assertEquals(fee, expectedFee);
+    }
+}

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nacho.creditcards.entities.CreditCard;
@@ -79,4 +80,13 @@ public class TransactionController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    
+    @GetMapping("/fee")
+    public ResponseEntity<BigDecimal> getFeeForTransaction(
+            @RequestParam(value = "brand") String brand,
+            @RequestParam(value = "amount") BigDecimal amount) {
+        BigDecimal fee = transactionService.simulateTransactionAndGetFee(brand, amount);
+        return ResponseEntity.ok(fee);
+    }
+
 }

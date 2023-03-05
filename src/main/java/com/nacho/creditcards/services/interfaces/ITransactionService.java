@@ -21,9 +21,11 @@ public interface ITransactionService {
 
     void deleteTransaction(Long id) throws TransactionNotFoundException;
 
-	double calculateFee(Transaction transaction);
+	BigDecimal calculateFee(Transaction transaction);
 
 	void validateTransaction(CreditCard creditCard, BigDecimal amount);
 
 	Transaction updateTransaction(Long id, Transaction transaction);
+
+	BigDecimal simulateTransactionAndGetFee(String brand, BigDecimal amount);
 }

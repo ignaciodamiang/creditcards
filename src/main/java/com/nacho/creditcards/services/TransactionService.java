@@ -1,7 +1,9 @@
 package com.nacho.creditcards.services;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,18 +75,18 @@ public class TransactionService implements ITransactionService {
         transactionRepository.deleteById(id);
     }
     
-    public double calculateFee(Transaction transaction) {
-        double fee = 0.0;
+    public BigDecimal calculateFee(Transaction transaction) {
+        BigDecimal fee = BigDecimal.ZERO;
         int year = transaction.getDateTime().getYear() % 100;
         int month = transaction.getDateTime().getMonthValue();
         if (transaction.getCreditCard().getBrand().equals(CardBrand.VISA)) {
-            fee = year / (double) month;
+            fee = BigDecimal.valueOf(year).divide(BigDecimal.valueOf(month), 2, RoundingMode.HALF_UP);
         } else if (transaction.getCreditCard().getBrand().equals(CardBrand.NARA)) {
-            fee = transaction.getDateTime().getDayOfMonth() * 0.5;
+            fee = BigDecimal.valueOf(transaction.getDateTime().getDayOfMonth()).multiply(BigDecimal.valueOf(0.5));
         } else if (transaction.getCreditCard().getBrand().equals(CardBrand.AMEX)) {
-            fee = month * 0.1;
+            fee = BigDecimal.valueOf(month).multiply(BigDecimal.valueOf(0.1));
         }
-        return transaction.getAmount().doubleValue() * fee;
+        return transaction.getAmount().multiply(fee);
     }
 
     @Override
@@ -99,4 +101,25 @@ public class TransactionService implements ITransactionService {
         return transactionRepository.save(existingTransaction);
     }
 
+    @Override
+    public BigDecimal simulateTransactionAndGetFee(String brand, BigDecimal amount) {
+        BigDecimal fee = BigDecimal.ZERO;
+        if (brand != null && amount != null) {
+            CardBrand cardBrand = CardBrand.valueOf(brand.toUpperCase());
+            LocalDateTime now = LocalDateTime.now();
+            CreditCard creditCard = CreditCard.builder()
+                    .brand(cardBrand)
+                    .expirationDate(YearMonth.from(now.plusYears(1)))
+                    .holderName("John Doe")
+                    .cardNumber("1234567890123456")
+                    .build();
+            Transaction transaction = Transaction.builder()
+                    .creditCard(creditCard)
+                    .dateTime(now)
+                    .amount(amount)
+                    .build();
+            fee = calculateFee(transaction);
+        }
+        return fee;
+    }
 }
