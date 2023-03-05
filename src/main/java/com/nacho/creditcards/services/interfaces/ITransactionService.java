@@ -20,4 +20,6 @@ public interface ITransactionService {
     List<Transaction> getAllTransactions();
 
     void deleteTransaction(Long id) throws TransactionNotFoundException;
+
+	double calculateFee(Transaction transaction);
 }

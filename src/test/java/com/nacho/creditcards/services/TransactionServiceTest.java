@@ -6,6 +6,8 @@ import com.nacho.creditcards.entities.Transaction;
 import com.nacho.creditcards.exceptions.TransactionAmountInvalidException;
 import com.nacho.creditcards.repositories.TransactionRepository;
 import com.nacho.creditcards.services.interfaces.ITransactionService;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -69,5 +71,67 @@ public class TransactionServiceTest {
         assertThrows(TransactionAmountInvalidException.class,
                 () -> transactionService.createTransaction(validCreditCard, invalidAmount));
     }
-
+    
+    @Test
+    public void testCalculateFeeForVisaTransaction() {
+        LocalDateTime dateTime = LocalDateTime.of(2022, 12, 10, 14, 30);
+        BigDecimal amount = BigDecimal.valueOf(100.0);
+        CreditCard creditCard = CreditCard.builder()
+                .id(1L)
+                .brand(CardBrand.VISA)
+                .cardNumber("1234567890123456")
+                .holderName("John Doe")
+                .expirationDate(YearMonth.of(2023, 12))
+                .build();
+        Transaction transaction = Transaction.builder()
+                .creditCard(creditCard)
+                .dateTime(dateTime)
+                .amount(amount)
+                .build();
+        double fee = transactionService.calculateFee(transaction);
+        double expectedFee = (double)22/12*100;
+        Assertions.assertEquals(expectedFee, fee, 0.01);
+    }
+    
+    @Test
+    public void testCalculateFeeForNaraTransaction() {
+        LocalDateTime dateTime = LocalDateTime.of(2022, 12, 10, 14, 30);
+        BigDecimal amount = BigDecimal.valueOf(100.0);
+        CreditCard creditCard = CreditCard.builder()
+                .id(1L)
+                .brand(CardBrand.NARA)
+                .cardNumber("1234567890123456")
+                .holderName("John Doe")
+                .expirationDate(YearMonth.of(2023, 12))
+                .build();
+        Transaction transaction = Transaction.builder()
+                .creditCard(creditCard)
+                .dateTime(dateTime)
+                .amount(amount)
+                .build();
+        double fee = transactionService.calculateFee(transaction);
+        double expectedFee = (double)10*0.5*100;
+        Assertions.assertEquals(expectedFee, fee, 0.01);
+    }
+    
+    @Test
+    public void testCalculateFeeForAmexTransaction() {
+        LocalDateTime dateTime = LocalDateTime.of(2022, 12, 10, 14, 30);
+        BigDecimal amount = BigDecimal.valueOf(100.0);
+        CreditCard creditCard = CreditCard.builder()
+                .id(1L)
+                .brand(CardBrand.AMEX)
+                .cardNumber("1234567890123456")
+                .holderName("John Doe")
+                .expirationDate(YearMonth.of(2023, 12))
+                .build();
+        Transaction transaction = Transaction.builder()
+                .creditCard(creditCard)
+                .dateTime(dateTime)
+                .amount(amount)
+                .build();
+        double fee = transactionService.calculateFee(transaction);
+        double expectedFee = 12*0.1*100;
+        Assertions.assertEquals(expectedFee, fee, 0.01);
+    }
 }

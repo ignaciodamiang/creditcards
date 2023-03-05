@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nacho.creditcards.entities.CardBrand;
 import com.nacho.creditcards.entities.CreditCard;
 import com.nacho.creditcards.entities.Transaction;
 import com.nacho.creditcards.exceptions.CreditCardNotFoundException;
@@ -64,5 +65,19 @@ public class TransactionService implements ITransactionService {
             throw new TransactionNotFoundException("Transaction not found");
         }
         transactionRepository.deleteById(id);
+    }
+    
+    public double calculateFee(Transaction transaction) {
+        double fee = 0.0;
+        int year = transaction.getDateTime().getYear() % 100;
+        int month = transaction.getDateTime().getMonthValue();
+        if (transaction.getCreditCard().getBrand().equals(CardBrand.VISA)) {
+            fee = year / (double) month;
+        } else if (transaction.getCreditCard().getBrand().equals(CardBrand.NARA)) {
+            fee = transaction.getDateTime().getDayOfMonth() * 0.5;
+        } else if (transaction.getCreditCard().getBrand().equals(CardBrand.AMEX)) {
+            fee = month * 0.1;
+        }
+        return transaction.getAmount().doubleValue() * fee;
     }
 }
