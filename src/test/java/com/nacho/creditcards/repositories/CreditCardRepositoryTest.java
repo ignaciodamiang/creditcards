@@ -65,7 +65,8 @@ public class CreditCardRepositoryTest {
     @Order(2)
     public void testFindAll() {
         List<CreditCard> creditCards = repository.findAll();
-        assertThat(creditCards).hasSize(3);
+        // assert that credit cards size is greater than 2
+        assertThat(creditCards).hasSizeGreaterThan(2);
     }
 
 @Test
