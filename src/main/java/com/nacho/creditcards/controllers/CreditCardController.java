@@ -68,6 +68,17 @@ public class CreditCardController {
         }
     }
 
+    @GetMapping("/is-valid")
+    public ResponseEntity<String> isCreditCardValid(@RequestBody CreditCard creditCard) {
+
+        boolean isValid = creditCardService.isValidCreditCard(creditCard);
+        if (isValid) {
+            return ResponseEntity.ok("Credit card is valid for operations");
+        } else {
+            return ResponseEntity.ok("Credit card is not valid for operations or there's incomplete data");
+        }
+    }   
+    
     @GetMapping("/is-distinct")
     public ResponseEntity<Boolean> isCreditCardDistinct(@RequestBody CreditCard creditCard) {
         boolean isDistinct = creditCardService.isCreditCardDistinct(creditCard);
