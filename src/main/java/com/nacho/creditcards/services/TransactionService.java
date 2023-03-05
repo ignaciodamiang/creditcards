@@ -31,13 +31,7 @@ public class TransactionService implements ITransactionService {
     public Transaction createTransaction(CreditCard creditCard, BigDecimal amount)
             throws CreditCardNotFoundException, CreditCardNotValidException, TransactionAmountInvalidException {
 
-        if (creditCard == null) {
-            throw new CreditCardNotFoundException("Credit card not found");
-        }
-        
-        if (amount.compareTo(BigDecimal.ZERO) <= 0 || amount.compareTo(BigDecimal.valueOf(1000)) > 0) {
-            throw new TransactionAmountInvalidException("Transaction amount is invalid");
-        }
+        validateTransaction(creditCard, amount);
 
         Transaction transaction = Transaction.builder()
                 .creditCard(creditCard)
@@ -46,6 +40,18 @@ public class TransactionService implements ITransactionService {
                 .build();
 
         return transactionRepository.save(transaction);
+    }
+    
+    public void validateTransaction(CreditCard creditCard, BigDecimal amount)
+            throws CreditCardNotFoundException, CreditCardNotValidException, TransactionAmountInvalidException {
+
+        if (creditCard == null) {
+            throw new CreditCardNotFoundException("Credit card not found");
+        }
+
+        if (amount.compareTo(BigDecimal.ZERO) <= 0 || amount.compareTo(BigDecimal.valueOf(1000)) > 0) {
+            throw new TransactionAmountInvalidException("Transaction amount is invalid");
+        }
     }
 
     @Override

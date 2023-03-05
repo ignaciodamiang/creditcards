@@ -3,6 +3,7 @@ package com.nacho.creditcards.services;
 import com.nacho.creditcards.entities.CardBrand;
 import com.nacho.creditcards.entities.CreditCard;
 import com.nacho.creditcards.entities.Transaction;
+import com.nacho.creditcards.exceptions.CreditCardNotFoundException;
 import com.nacho.creditcards.exceptions.TransactionAmountInvalidException;
 import com.nacho.creditcards.repositories.TransactionRepository;
 import com.nacho.creditcards.services.interfaces.ITransactionService;
@@ -27,10 +28,13 @@ public class TransactionServiceTest {
 
     @Mock
     private TransactionRepository transactionRepository;
+    
+    @Mock
+    private CreditCardService creditCardService;
 
     @InjectMocks
     private ITransactionService transactionService = new TransactionService(transactionRepository);
-
+    
     private CreditCard validCreditCard;
     private BigDecimal validAmount;
     private BigDecimal invalidAmount;
@@ -134,4 +138,45 @@ public class TransactionServiceTest {
         double expectedFee = 12*0.1*100;
         Assertions.assertEquals(expectedFee, fee, 0.01);
     }
+    
+    @Test
+    public void testValidateTransaction_withValidData() throws Exception {
+        CreditCard creditCard = CreditCard.builder()
+                .id(1L)
+                .cardNumber("1234 5678 9012 3456")
+                .holderName("John Doe")
+                .build();
+        BigDecimal amount = BigDecimal.valueOf(500);
+        when(creditCardService.getCreditCardById(creditCard.getId())).thenReturn(creditCard);
+
+        // No exception should be thrown when credit card and amount are valid
+        transactionService.validateTransaction(creditCard, amount);
+    }
+    
+    @Test
+    public void testValidateTransaction_withInvalidCreditCard() {
+        CreditCard creditCard = null;
+        BigDecimal amount = BigDecimal.valueOf(500);
+        when(creditCardService.getCreditCardById(1L)).thenReturn(null);
+
+        assertThrows(CreditCardNotFoundException.class, () -> {
+            transactionService.validateTransaction(creditCard, amount);
+        });
+    }
+    
+    @Test
+    public void testValidateTransaction_withInvalidAmount() {
+        CreditCard creditCard = CreditCard.builder()
+                .id(1L)
+                .cardNumber("1234 5678 9012 3456")
+                .holderName("John Doe")
+                .build();
+        BigDecimal amount = BigDecimal.valueOf(1001);
+        when(creditCardService.getCreditCardById(creditCard.getId())).thenReturn(creditCard);
+
+        assertThrows(TransactionAmountInvalidException.class, () -> {
+            transactionService.validateTransaction(creditCard, amount);
+        });
+    }
 }
+
