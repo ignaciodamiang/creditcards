@@ -4,8 +4,12 @@ import com.nacho.creditcards.entities.CreditCard;
 import com.nacho.creditcards.entities.CardBrand;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -15,7 +19,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestInstance(Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CreditCardRepositoryTest {
 
     @Autowired
@@ -46,6 +51,7 @@ public class CreditCardRepositoryTest {
     }
 
     @Test
+    @Order(1)
     public void testFindByCardNumber() {
         String cardNumber = "1234 5678 9012 3456";
         CreditCard creditCard = repository.findByCardNumber(cardNumber);
@@ -56,12 +62,14 @@ public class CreditCardRepositoryTest {
     }
 
     @Test
+    @Order(2)
     public void testFindAll() {
         List<CreditCard> creditCards = repository.findAll();
         assertThat(creditCards).hasSize(3);
     }
 
 @Test
+@Order(2)
 public void testSaveNewCreditCard() {
     CreditCard creditCard = CreditCard.builder()
             .cardNumber("7777 8888 9999 0000")
@@ -77,6 +85,7 @@ public void testSaveNewCreditCard() {
 
 
     @Test
+    @Order(3)
     public void testUpdateCreditCard() {
         CreditCard creditCard = repository.findByCardNumber("1234 5678 9012 3456");
         creditCard.setHolderName("John Smith");
@@ -87,6 +96,7 @@ public void testSaveNewCreditCard() {
     }
 
     @Test
+    @Order(4)
     public void testDeleteCreditCard() {
         CreditCard creditCard = repository.findByCardNumber("2222 3333 4444 5555");
         repository.delete(creditCard);
@@ -95,6 +105,7 @@ public void testSaveNewCreditCard() {
     }
 
     @Test
+    @Order(5)
     void testFindByCardNumberAndHolderNameAndExpirationDateAndBrand() {
         CreditCard creditCard = CreditCard.builder()
                 .cardNumber("1111 8888 9999 0000")
