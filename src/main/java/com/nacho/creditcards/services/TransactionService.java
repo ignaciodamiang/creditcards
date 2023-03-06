@@ -80,13 +80,13 @@ public class TransactionService implements ITransactionService {
         int year = transaction.getDateTime().getYear() % 100;
         int month = transaction.getDateTime().getMonthValue();
         if (transaction.getCreditCard().getBrand().equals(CardBrand.VISA)) {
-            fee = BigDecimal.valueOf(year).divide(BigDecimal.valueOf(month), 2, RoundingMode.HALF_UP);
+            fee = BigDecimal.valueOf(year).divide(BigDecimal.valueOf(month), 2, RoundingMode.UNNECESSARY);
         } else if (transaction.getCreditCard().getBrand().equals(CardBrand.NARA)) {
             fee = BigDecimal.valueOf(transaction.getDateTime().getDayOfMonth()).multiply(BigDecimal.valueOf(0.5));
         } else if (transaction.getCreditCard().getBrand().equals(CardBrand.AMEX)) {
             fee = BigDecimal.valueOf(month).multiply(BigDecimal.valueOf(0.1));
         }
-        return transaction.getAmount().multiply(fee);
+        return transaction.getAmount().multiply(fee).divide(BigDecimal.valueOf(100));
     }
 
     @Override
