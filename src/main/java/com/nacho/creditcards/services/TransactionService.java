@@ -86,7 +86,7 @@ public class TransactionService implements ITransactionService {
         } else if (transaction.getCreditCard().getBrand().equals(CardBrand.AMEX)) {
             fee = BigDecimal.valueOf(month).multiply(BigDecimal.valueOf(0.1));
         }
-        return transaction.getAmount().multiply(fee);
+        return transaction.getAmount().multiply(fee).divide(BigDecimal.valueOf(100));
     }
 
     @Override
