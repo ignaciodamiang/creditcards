@@ -84,4 +84,4 @@ GET /transactions/fee?brand=visa&amount=100.00
 La aplicación está compuesta por capas de servicios, repositorios, controladores y entidades. 
 Se conecta a una base de datos mysql para realizar las operaciones.
 Hay tests para todas las capas y entidades.
-Se puede levantar el projecto con docker composer con el comando `compose compose up` despues de haber compilado la aplicación.
+Se puede levantar el projecto con docker composer con el comando `docker compose up` despues de haber compilado la aplicación.
