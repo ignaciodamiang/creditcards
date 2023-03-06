@@ -68,7 +68,7 @@ public class CreditCardController {
         }
     }
 
-    @GetMapping("/is-valid")
+    @PostMapping("/is-valid")
     public ResponseEntity<String> isCreditCardValid(@RequestBody CreditCard creditCard) {
 
         boolean isValid = creditCardService.isValidCreditCard(creditCard);
@@ -79,7 +79,7 @@ public class CreditCardController {
         }
     }   
     
-    @GetMapping("/is-distinct")
+    @PostMapping("/is-distinct")
     public ResponseEntity<Boolean> isCreditCardDistinct(@RequestBody CreditCard creditCard) {
         boolean isDistinct = creditCardService.isCreditCardDistinct(creditCard);
         return ResponseEntity.ok(isDistinct);

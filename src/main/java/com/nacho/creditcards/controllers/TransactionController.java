@@ -87,6 +87,5 @@ public class TransactionController {
             @RequestParam(value = "amount") BigDecimal amount) {
         BigDecimal fee = transactionService.simulateTransactionAndGetFee(brand, amount);
         return ResponseEntity.ok(fee);
-    }
-
+    }    
 }
