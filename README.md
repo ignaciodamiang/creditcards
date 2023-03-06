@@ -39,7 +39,7 @@ Credit card is not valid for operations.
 POST /creditcards/is-distinct: Este endpoint permite verificar si los detalles de una tarjeta de crédito son distintos de los detalles de todas las demás tarjetas de crédito almacenadas en la base de datos. Toma los detalles de la tarjeta de crédito en el cuerpo de la solicitud como un objeto JSON.
 Ej respuesta:
 
-```json
+```
 isDistinct: true
 ```
 
