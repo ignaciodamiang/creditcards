@@ -85,3 +85,4 @@ La aplicación está compuesta por capas de servicios, repositorios, controlador
 Se conecta a una base de datos mysql para realizar las operaciones.
 Hay tests para todas las capas y entidades.
 Se puede levantar el projecto con docker composer con el comando `docker compose up` despues de haber compilado la aplicación.
+El despliegue se realiza en dos contenedores, uno para el hosteo de la aplicación y otro para la base de datos mysql.
