@@ -84,5 +84,33 @@ GET /transactions/fee?brand=visa&amount=100.00
 La aplicación está compuesta por capas de servicios, repositorios, controladores y entidades. 
 Se conecta a una base de datos mysql para realizar las operaciones.
 Hay tests para todas las capas y entidades.
-Se puede levantar el projecto con docker composer con el comando `docker compose up` despues de haber compilado la aplicación.
 El despliegue se realiza en dos contenedores, uno para el hosteo de la aplicación y otro para la base de datos mysql.
+
+## Dependencias
+
+- Java 17
+- Spring Boot 3
+- Spring Boot Starter Web
+- Spring Data JPA
+- Spring Data REST
+- Maven
+- MySQL 8
+- Hibernate
+- Lombok
+- Mockito
+- Docker
+- Docker Compose
+
+## Correr el projecto
+
+Compilar aplicación en el `.jar`
+
+```
+mvn package -DskipTests
+```
+
+Levantar el projecto con Docker
+
+```
+docker compose up --build
+```
